@@ -87,8 +87,8 @@ public class Authentication {
             }
 
             User user = result.get();
-            if (!"ACTIVE".equalsIgnoreCase(user.status())) {
-                System.out.println("Your account is " + user.status() + ". Please contact an administrator.");
+            if (!"APPROVED".equalsIgnoreCase(user.status())) {
+                System.out.println("Your account is " + user.status() + ". Please wait for an administrator to approve it.");
                 return;
             }
 

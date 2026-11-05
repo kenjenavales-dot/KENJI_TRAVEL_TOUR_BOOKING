@@ -20,6 +20,10 @@ abstract class RoleMenu {
     protected void waitForReturn() {
         System.out.println("Press Enter to return to the main authentication menu.");
         scanner.nextLine();
+        logLogout();
+    }
+
+    protected void logLogout() {
         try {
             userDao.logActivity(user.userId(), "LOGOUT", "User left the role menu.");
         } catch (SQLException e) {

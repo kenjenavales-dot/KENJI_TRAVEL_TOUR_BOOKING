@@ -6,6 +6,8 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class UserDao {
@@ -57,6 +59,61 @@ public class UserDao {
             ps.setString(3, description);
             ps.executeUpdate();
         }
+    }
+
+    /** Returns every registered account, regardless of role or status. */
+    public List<User> getAllUsers() throws SQLException {
+        String sql = "SELECT user_id, username, password, role, status FROM users ORDER BY user_id";
+        List<User> users = new ArrayList<>();
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                users.add(mapUser(rs));
+            }
+        }
+        return users;
+    }
+
+    /** Returns every account (any role) whose status is PENDING. */
+    public List<User> getPendingUsers() throws SQLException {
+        String sql = "SELECT user_id, username, password, role, status FROM users "
+                + "WHERE status = ? ORDER BY user_id";
+        List<User> users = new ArrayList<>();
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, "PENDING");
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    users.add(mapUser(rs));
+                }
+            }
+        }
+        return users;
+    }
+
+    /**
+     * Sets the given user's status to APPROVED.
+     * Note: the primary key column in this schema is user_id.
+     *
+     * @return true if a row was updated, false if no user has that ID
+     */
+    public boolean approveUser(int userId) throws SQLException {
+        String sql = "UPDATE users SET status = 'APPROVED' WHERE user_id = ?";
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            return ps.executeUpdate() > 0;
+        }
+    }
+
+    private User mapUser(ResultSet rs) throws SQLException {
+        return new User(
+                rs.getInt("user_id"),
+                rs.getString("username"),
+                rs.getString("password"),
+                rs.getString("role"),
+                rs.getString("status"));
     }
 
     private String hashPassword(String password) {

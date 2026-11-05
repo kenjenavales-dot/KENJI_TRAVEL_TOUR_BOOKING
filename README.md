@@ -19,7 +19,7 @@ The SQLite database file `travel_tour_booking.db` is created in the project's wo
 - STAFF
 - CUSTOMER
 
-New registrations are stored with `PENDING` status. For demonstration, an ADMIN account must be activated in the database before it can access the system. You can change a user's status to `ACTIVE` using DB Browser for SQLite.
+New registrations are stored with `PENDING` status. For demonstration, an ADMIN account must be approved in the database before it can access the system. To bootstrap the first ADMIN, change that user's status to `APPROVED` in DB Browser for SQLite. After that, admins can approve other accounts from the Admin Menu.
 
 ## Important
 This is a starter implementation for the deliverable. Review it against the exact roles and features in your approved System Proposal before submitting. Do not submit screenshots until you have run the project successfully yourself.
