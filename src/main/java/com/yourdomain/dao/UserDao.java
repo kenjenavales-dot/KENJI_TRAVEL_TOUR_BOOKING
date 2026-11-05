@@ -92,6 +92,24 @@ public class UserDao {
         return users;
     }
 
+
+    /**
+     * Updates an existing user's role and account status.
+     * Uses this project's SQLite schema column names (role and user_id).
+     *
+     * @return true when a user row was updated; false when the ID does not exist.
+     */
+    public boolean updateUserRoleAndStatus(int userId, String newRole, String newStatus) throws SQLException {
+        String sql = "UPDATE users SET role = ?, status = ? WHERE user_id = ?";
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, newRole.toUpperCase());
+            ps.setString(2, newStatus.toUpperCase());
+            ps.setInt(3, userId);
+            return ps.executeUpdate() > 0;
+        }
+    }
+
     /**
      * Sets the given user's status to APPROVED.
      * Note: the primary key column in this schema is user_id.
